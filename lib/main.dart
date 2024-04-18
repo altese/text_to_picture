@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:text_to_picture_app/home_screen.dart';
+import 'package:text_to_picture_app/common/theme/text_styles.dart';
+import 'package:text_to_picture_app/home/presentation/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: AppTextStyles.fontFamily,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
         useMaterial3: true,
       ),
       home: const HomeScreen(),
