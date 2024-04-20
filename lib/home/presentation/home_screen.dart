@@ -32,7 +32,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 bgColor: AppColor.bgGreyColor,
                 textColor: AppColor.textColor,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+              renderPick(
+                children: AppColor.imageBgColors
+                    .map((e) => renderItem(color: e))
+                    .toList(),
+              ),
+              renderPick(
+                children: Fonts.values
+                    .map(
+                      (e) => Center(
+                        child: renderItem(
+                          child: Text(
+                            e.displayName,
+                            style: AppTextStyles.textStyle14.copyWith(
+                              fontFamily: e.name,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+              const SizedBox(height: 20),
               renderBottom(),
             ],
           ),
@@ -58,7 +80,7 @@ Row renderTop() {
   );
 }
 
-renderTexFie(
+GestureDetector renderTexFie(
   BuildContext context, {
   required double height,
   required Color bgColor,
@@ -85,7 +107,6 @@ renderTexFie(
       height: height,
       decoration: BoxDecoration(
         color: bgColor,
-        // borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: AppColor.borderColor),
       ),
       child: Column(
@@ -167,48 +188,98 @@ Row renderBottom() {
           ),
         ),
       ),
-      MenuAnchor(
-        style: MenuStyle(
-          padding: const MaterialStatePropertyAll(
-            EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          ),
-          elevation: const MaterialStatePropertyAll(0),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            const RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: AppColor.borderColor,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-            ),
-          ),
-          backgroundColor: const MaterialStatePropertyAll(
-            AppColor.bgColor,
+      TextButton(
+        onPressed: () {},
+        child: Text(
+          'F',
+          style: AppTextStyles.textStyle30.copyWith(
+            fontFamily: AppTextStyles.fontFamily,
           ),
         ),
-        builder: (context, controller, child) {
-          return TextButton(
-            onPressed: () {
-              if (controller.isOpen) {
-                controller.close();
-              } else {
-                controller.open();
-              }
-            },
-            child: Text(
-              'F',
-              style: AppTextStyles.textStyle30.copyWith(
-                fontFamily: AppTextStyles.fontFamily,
-              ),
-            ),
-          );
-        },
-        menuChildren: const [
-          Text('마루부리', style: AppTextStyles.textStyle12),
-          Text('data'),
-          Text('data'),
-        ],
       ),
+      // MenuAnchor(
+      //   style: MenuStyle(
+      //     padding: const MaterialStatePropertyAll(
+      //       EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      //     ),
+      //     elevation: const MaterialStatePropertyAll(0),
+      //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      //       const RoundedRectangleBorder(
+      //         side: BorderSide(
+      //           width: 1,
+      //           color: AppColor.borderColor,
+      //         ),
+      //         borderRadius: BorderRadius.all(Radius.circular(8)),
+      //       ),
+      //     ),
+      //     backgroundColor: const MaterialStatePropertyAll(
+      //       AppColor.bgColor,
+      //     ),
+      //   ),
+      //   builder: (context, controller, child) {
+      //     return TextButton(
+      //       onPressed: () {
+      //         if (controller.isOpen) {
+      //           controller.close();
+      //         } else {
+      //           controller.open();
+      //         }
+      //       },
+      //       child: Text(
+      //         'F',
+      //         style: AppTextStyles.textStyle30.copyWith(
+      //           fontFamily: AppTextStyles.fontFamily,
+      //         ),
+      //       ),
+      //     );
+      //   },
+      //   menuChildren: const [
+      //     Text('마루부리', style: AppTextStyles.textStyle12),
+      //     Text('data'),
+      //     Text('data'),
+      //   ],
+      // ),
     ],
+  );
+}
+
+SingleChildScrollView renderPick({
+  required List<Widget> children,
+}) {
+  return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: children,
+      ),
+    ),
+  );
+}
+
+Padding renderItem({
+  Color? color,
+  Widget? child,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    child: Container(
+      height: 35,
+      width: child == null ? 35 : null,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: child == null
+            ? Border.all(
+                color: AppColor.borderColor,
+              )
+            : null,
+      ),
+      child: Center(child: child),
+    ),
   );
 }

@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:text_to_picture_app/common/theme/app_colors.dart';
 
+enum Fonts {
+  maruburi('마루부리'),
+  chosunGu('조선굴림'),
+  kopubBatang('KoPub바탕'),
+  kopubDotum('KoPub돋움'),
+  okja('온글잎 매일옥자체'),
+  pretendard('프리텐다드'),
+  ridiBatang('리디바탕');
+
+  final String displayName;
+
+  const Fonts(this.displayName);
+}
+
 class AppTextStyles {
   static const String fontFamily = 'maruburi';
 
