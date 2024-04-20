@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:text_to_picture_app/common/theme/app_colors.dart';
-import 'package:text_to_picture_app/common/widgets/main_button.dart';
+import 'package:text_to_picture_app/common/widgets/animation_button.dart';
 import 'package:text_to_picture_app/input_text/presentation/label_chip.dart';
 
 class InputScreen extends StatefulWidget {
@@ -66,7 +66,12 @@ class _InputScreenState extends State<InputScreen> {
                   textEditingController: _authController,
                 ),
                 const Spacer(),
-                const MainButton(text: '완료'),
+                AnimationButton(
+                  type: ButtonType.text,
+                  upperBound: 0.03,
+                  text: '완료',
+                  onTap: () {},
+                ),
               ],
             ),
           ),

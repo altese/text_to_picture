@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 import 'package:text_to_picture_app/home/presentation/home_screen.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: AppTextStyles.fontFamily,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColor.primary),
         useMaterial3: true,
       ),
       home: const HomeScreen(),

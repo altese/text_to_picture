@@ -31,6 +31,11 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
   );
 
+  static const TextStyle textStyle24 = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
   static const TextStyle textStyle30 = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
