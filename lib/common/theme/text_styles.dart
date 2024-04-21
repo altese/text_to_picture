@@ -15,6 +15,17 @@ enum Fonts {
   const Fonts(this.displayName);
 }
 
+enum FontSizes {
+  small('작게', 12),
+  medium('보통', 14),
+  large('크게', 16);
+
+  final String displayName;
+  final double fontSize;
+
+  const FontSizes(this.displayName, this.fontSize);
+}
+
 class AppTextStyles {
   static const String fontFamily = 'maruburi';
 

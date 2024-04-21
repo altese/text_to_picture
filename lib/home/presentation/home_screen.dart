@@ -7,15 +7,19 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 import 'package:text_to_picture_app/common/widgets/animation_button.dart';
-import 'package:text_to_picture_app/home/presentation/circle_image.dart';
 import 'package:text_to_picture_app/home/presentation/notifiers/texfie_notifier.dart';
 import 'package:text_to_picture_app/input_text/input_screen.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -34,38 +38,13 @@ class HomeScreen extends ConsumerWidget {
                 ref: ref,
               ),
               const SizedBox(height: 20),
+              renderPick(datas: AppColor.imageBgColors, type: OptionType.color),
+              const SizedBox(height: 10),
+              renderPick(datas: Fonts.values, type: OptionType.fontFamily),
+              const SizedBox(height: 10),
               renderPick(
-                children: AppColor.imageBgColors
-                    .map((e) => renderItem(color: e))
-                    .toList(),
-              ),
-              renderPick(
-                children: Fonts.values
-                    .map(
-                      (e) => Center(
-                        child: renderItem(
-                          child: Text(
-                            e.displayName,
-                            style: AppTextStyles.textStyle14.copyWith(
-                              fontFamily: e.name,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              renderPick(
-                children: [(12.0, '작게'), (14.0, '중간'), (16.0, '크게')]
-                    .map(
-                      (e) => renderItem(
-                        child: Text(
-                          e.$2,
-                          style: TextStyle(fontSize: e.$1),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                datas: FontSizes.values,
+                type: OptionType.fontSize,
               ),
               const SizedBox(height: 20),
               renderBottom(context),
@@ -79,16 +58,17 @@ class HomeScreen extends ConsumerWidget {
 
 Row renderTop() {
   return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      const CircleImage(
-        diameter: 50,
-        image: NetworkImage(
-          'https://kin-phinf.pstatic.net/20220910_23/1662814623235WWQpE_JPEG/FE054733-3554-475D-9E18-054509B8D11F.jpeg?type=w750',
-        ),
-      ),
+      // const CircleImage(
+      //   diameter: 50,
+      //   image: NetworkImage(
+      //     'https://kin-phinf.pstatic.net/20220910_23/1662814623235WWQpE_JPEG/FE054733-3554-475D-9E18-054509B8D11F.jpeg?type=w750',
+      //   ),
+      // ),
       SvgPicture.asset('assets/svgs/app_logo.svg'),
-      const Icon(size: 35, Icons.search)
+      // const Icon(size: 35, Icons.search)
     ],
   );
 }
@@ -118,7 +98,7 @@ GestureDetector renderTexFie(
       );
     },
     child: Container(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(30),
       height: height,
       decoration: BoxDecoration(
         color: texFie.backgoundColor,
@@ -133,7 +113,7 @@ GestureDetector renderTexFie(
             style: TextStyle(
               color: textColor,
               fontSize: texFie.fontSize,
-              // fontFamily: texFie.font!.name,
+              fontFamily: texFie.font!.name,
             ),
           ),
           Row(
@@ -146,14 +126,14 @@ GestureDetector renderTexFie(
                     texFie.title!,
                     style: AppTextStyles.textStyle14.copyWith(
                       color: textColor,
-                      // fontFamily: texFie.font!.name,
+                      fontFamily: texFie.font!.name,
                     ),
                   ),
                   Text(
                     texFie.author!,
                     style: AppTextStyles.textStyle14.copyWith(
                       color: textColor,
-                      // fontFamily: texFie.font!.name,
+                      fontFamily: texFie.font!.name,
                     ),
                   ),
                 ],
@@ -170,15 +150,15 @@ Row renderBottom(BuildContext context) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
-      TextButton(
-        onPressed: () {},
-        child: Text(
-          'T',
-          style: AppTextStyles.textStyle30.copyWith(
-            fontFamily: AppTextStyles.fontFamily,
-          ),
-        ),
-      ),
+      // TextButton(
+      //   onPressed: () {},
+      //   child: Text(
+      //     'T',
+      //     style: AppTextStyles.textStyle30.copyWith(
+      //       fontFamily: AppTextStyles.fontFamily,
+      //     ),
+      //   ),
+      // ),
       AnimationButton(
         useDelay: true,
         type: ButtonType.icon,
@@ -199,15 +179,15 @@ Row renderBottom(BuildContext context) {
           }
         },
       ),
-      TextButton(
-        onPressed: () {},
-        child: Text(
-          'F',
-          style: AppTextStyles.textStyle30.copyWith(
-            fontFamily: AppTextStyles.fontFamily,
-          ),
-        ),
-      ),
+      // TextButton(
+      //   onPressed: () {},
+      //   child: Text(
+      //     'F',
+      //     style: AppTextStyles.textStyle30.copyWith(
+      //       fontFamily: AppTextStyles.fontFamily,
+      //     ),
+      //   ),
+      // ),
     ],
   );
 }
@@ -271,8 +251,15 @@ void requestPermission(BuildContext context, PermissionStatus status) async {
 }
 
 SingleChildScrollView renderPick({
-  required List<Widget> children,
+  required List<dynamic> datas,
+  required OptionType type,
 }) {
+  final conversedDatas = type == OptionType.color
+      ? datas as List<Color>
+      : type == OptionType.fontSize
+          ? datas as List<FontSizes>
+          : datas as List<Fonts>;
+
   return SingleChildScrollView(
     scrollDirection: Axis.horizontal,
     child: Container(
@@ -282,31 +269,97 @@ SingleChildScrollView renderPick({
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        children: children,
+        children: conversedDatas
+            .map((e) => OptionItem(
+                  type: type,
+                  data: e,
+                ))
+            .toList(),
       ),
     ),
   );
 }
 
-Padding renderItem({
-  Color? color,
-  Widget? child,
-}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10),
-    child: Container(
-      height: 35,
-      width: child == null ? 35 : null,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: child == null
-            ? Border.all(
-                color: AppColor.borderColor,
-              )
-            : null,
+enum OptionType { color, fontFamily, fontSize }
+
+class OptionItem<T> extends ConsumerWidget {
+  const OptionItem({
+    required this.type,
+    required this.data,
+    super.key,
+  });
+
+  final OptionType type;
+  final T data;
+
+  Color? setColor() {
+    if (type == OptionType.color) {
+      final conversedData = data as Color;
+      return conversedData;
+    }
+    return null;
+  }
+
+  (String label, double fontSize, Fonts fontFamily) setFont() {
+    if (type == OptionType.fontSize) {
+      final conversedData = data as FontSizes;
+      return (
+        conversedData.displayName,
+        conversedData.fontSize,
+        Fonts.maruburi
+      );
+    } else {
+      final conversedData = data as Fonts;
+      return (
+        conversedData.displayName,
+        14.0,
+        conversedData,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        print('object');
+        if (type == OptionType.color) {
+          ref
+              .read(texFieNotifierProvider.notifier)
+              .set(backgoundColor: setColor());
+        } else if (type == OptionType.fontFamily) {
+          ref.read(texFieNotifierProvider.notifier).set(font: setFont().$3);
+        } else {
+          ref.read(texFieNotifierProvider.notifier).set(fontSize: setFont().$2);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Container(
+          height: 35,
+          width: type == OptionType.color ? 35 : null,
+          decoration: BoxDecoration(
+            color: setColor(),
+            shape: BoxShape.circle,
+            border: type == OptionType.color
+                ? Border.all(
+                    color: AppColor.borderColor,
+                  )
+                : null,
+          ),
+          child: type == OptionType.color
+              ? null
+              : Center(
+                  child: Text(
+                    setFont().$1,
+                    style: TextStyle(
+                      fontFamily: setFont().$3.name,
+                      fontSize: setFont().$2,
+                    ),
+                  ),
+                ),
+        ),
       ),
-      child: Center(child: child),
-    ),
-  );
+    );
+  }
 }

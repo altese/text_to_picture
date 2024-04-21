@@ -41,7 +41,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
     );
   }
 
-  void pickOptions({
+  void set({
     String? contents,
     String? title,
     String? author,
