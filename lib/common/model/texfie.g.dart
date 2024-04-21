@@ -23,9 +23,9 @@ class TexFieAdapter extends TypeAdapter<TexFie> {
       backgroundImageUrl: fields[3] as String?,
       backgoundColor:
           fields[4] == null ? const Color(4293388263) : fields[4] as Color?,
-      font: fields[5] == null ? Fonts.maruburi : fields[5] as Fonts?,
-      fontSize: fields[6] == null ? 14 : fields[6] as int?,
-      texFieUrl: fields[7] as String,
+      font: fields[5] == null ? Fonts.okja : fields[5] as Fonts?,
+      fontSize: fields[6] == null ? 14 : fields[6] as double?,
+      texFieUrl: fields[7] as String?,
     );
   }
 

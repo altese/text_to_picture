@@ -1,5 +1,6 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -7,18 +8,14 @@ import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 import 'package:text_to_picture_app/common/widgets/animation_button.dart';
 import 'package:text_to_picture_app/home/presentation/circle_image.dart';
+import 'package:text_to_picture_app/home/presentation/notifiers/texfie_notifier.dart';
 import 'package:text_to_picture_app/input_text/input_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -33,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
               renderTexFie(
                 context,
                 height: size.width - 40,
-                bgColor: AppColor.bgGreyColor,
                 textColor: AppColor.textColor,
+                ref: ref,
               ),
               const SizedBox(height: 20),
               renderPick(
@@ -99,9 +96,11 @@ Row renderTop() {
 GestureDetector renderTexFie(
   BuildContext context, {
   required double height,
-  required Color bgColor,
   required Color textColor,
+  required WidgetRef ref,
 }) {
+  final texFie = ref.watch(texFieNotifierProvider);
+
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -122,7 +121,7 @@ GestureDetector renderTexFie(
       padding: const EdgeInsets.all(40),
       height: height,
       decoration: BoxDecoration(
-        color: bgColor,
+        color: texFie.backgoundColor,
         border: Border.all(color: AppColor.borderColor),
       ),
       child: Column(
@@ -130,9 +129,11 @@ GestureDetector renderTexFie(
         children: [
           const SizedBox(),
           Text(
-            '그렇다면 운명이란 대체 누가 안배해 주는 건가요?\n옳은 선택 같은 건 없어요. 나를 위한 선택만이 있을 뿐.\n저는 늘 그렇게 해왔어요. 이것은 다른 누구도 아닌 \'나\'의 운명이기 때문입니다.',
-            style: AppTextStyles.textStyle14.copyWith(
+            texFie.contents,
+            style: TextStyle(
               color: textColor,
+              fontSize: texFie.fontSize,
+              // fontFamily: texFie.font!.name,
             ),
           ),
           Row(
@@ -142,24 +143,20 @@ GestureDetector renderTexFie(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '소라의 눈',
+                    texFie.title!,
                     style: AppTextStyles.textStyle14.copyWith(
                       color: textColor,
+                      // fontFamily: texFie.font!.name,
                     ),
                   ),
                   Text(
-                    '썸머',
+                    texFie.author!,
                     style: AppTextStyles.textStyle14.copyWith(
                       color: textColor,
+                      // fontFamily: texFie.font!.name,
                     ),
                   ),
                 ],
-              ),
-              const CircleImage(
-                diameter: 50,
-                image: NetworkImage(
-                  'https://kin-phinf.pstatic.net/20220910_23/1662814623235WWQpE_JPEG/FE054733-3554-475D-9E18-054509B8D11F.jpeg?type=w750',
-                ),
               ),
             ],
           ),

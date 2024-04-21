@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:hive/hive.dart';
-import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 
 part 'texfie.g.dart';
@@ -20,17 +19,17 @@ class TexFie extends HiveObject {
   @HiveField(3)
   String? backgroundImageUrl;
 
-  @HiveField(4, defaultValue: AppColor.bgGreyColor)
+  @HiveField(4)
   Color? backgoundColor;
 
-  @HiveField(5, defaultValue: Fonts.maruburi)
+  @HiveField(5)
   Fonts? font;
 
-  @HiveField(6, defaultValue: 14)
-  int? fontSize;
+  @HiveField(6)
+  double? fontSize;
 
   @HiveField(7)
-  String texFieUrl;
+  String? texFieUrl;
 
   TexFie({
     required this.contents,
@@ -40,7 +39,7 @@ class TexFie extends HiveObject {
     this.backgoundColor,
     this.font,
     this.fontSize,
-    required this.texFieUrl,
+    this.texFieUrl,
   });
 
   TexFie copyWith({
@@ -50,7 +49,7 @@ class TexFie extends HiveObject {
     String? backgroundImageUrl,
     Color? backgoundColor,
     Fonts? font,
-    int? fontSize,
+    double? fontSize,
     String? texFieUrl,
   }) {
     return TexFie(
