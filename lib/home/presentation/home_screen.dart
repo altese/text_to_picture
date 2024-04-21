@@ -1,9 +1,10 @@
+import 'dart:io';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 import 'package:text_to_picture_app/common/widgets/animation_button.dart';
@@ -47,7 +48,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 type: OptionType.fontSize,
               ),
               const SizedBox(height: 20),
-              renderBottom(context),
+              renderBottom(context, ref),
             ],
           ),
         ),
@@ -81,6 +82,16 @@ GestureDetector renderTexFie(
 }) {
   final texFie = ref.watch(texFieNotifierProvider);
 
+  DecorationImage? backgroundImage =
+      texFie.backgroundImageUrl != '' && texFie.backgroundImageUrl != null
+          ? DecorationImage(
+              image: FileImage(File(texFie.backgroundImageUrl!)),
+              fit: BoxFit.cover,
+            )
+          : null;
+
+  print(backgroundImage ?? 'backgroundImage is null');
+
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -103,6 +114,7 @@ GestureDetector renderTexFie(
       decoration: BoxDecoration(
         color: texFie.backgoundColor,
         border: Border.all(color: AppColor.borderColor),
+        image: backgroundImage,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -146,7 +158,7 @@ GestureDetector renderTexFie(
   );
 }
 
-Row renderBottom(BuildContext context) {
+Row renderBottom(BuildContext context, WidgetRef ref) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
@@ -168,14 +180,17 @@ Row renderBottom(BuildContext context) {
           color: AppColor.bgColor,
         ),
         onTap: () async {
-          final PermissionStatus status = await Permission.photos.request();
-
-          if (status == PermissionStatus.granted) {
+          try {
             final XFile? image =
                 await ImagePicker().pickImage(source: ImageSource.gallery);
-          } else {
-            // ignore: use_build_context_synchronously
-            requestPermission(context, status);
+
+            if (image != null) {
+              ref
+                  .read(texFieNotifierProvider.notifier)
+                  .set(backgroundImageUrl: image.path);
+            }
+          } catch (e) {
+            requestPermission(context);
           }
         },
       ),
@@ -192,7 +207,7 @@ Row renderBottom(BuildContext context) {
   );
 }
 
-void requestPermission(BuildContext context, PermissionStatus status) async {
+void requestPermission(BuildContext context) async {
   await showGeneralDialog(
     context: context,
     // barrierDismissible: true,
@@ -322,11 +337,12 @@ class OptionItem<T> extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
-        print('object');
+        print('set backgroundImageUrl: null');
         if (type == OptionType.color) {
-          ref
-              .read(texFieNotifierProvider.notifier)
-              .set(backgoundColor: setColor());
+          ref.read(texFieNotifierProvider.notifier).set(
+                backgoundColor: setColor(),
+                backgroundImageUrl: '',
+              );
         } else if (type == OptionType.fontFamily) {
           ref.read(texFieNotifierProvider.notifier).set(font: setFont().$3);
         } else {
