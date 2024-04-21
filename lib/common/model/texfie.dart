@@ -5,6 +5,11 @@ import 'package:text_to_picture_app/common/theme/text_styles.dart';
 
 part 'texfie.g.dart';
 
+enum TexFieState {
+  initial,
+  data,
+}
+
 @HiveType(typeId: 1)
 class TexFie extends HiveObject {
   @HiveField(0)
@@ -31,6 +36,9 @@ class TexFie extends HiveObject {
   @HiveField(7)
   String? texFieUrl;
 
+  @HiveField(8)
+  TexFieState state;
+
   TexFie({
     required this.contents,
     this.title,
@@ -40,6 +48,7 @@ class TexFie extends HiveObject {
     this.font,
     this.fontSize,
     this.texFieUrl,
+    required this.state,
   });
 
   TexFie copyWith({
@@ -51,6 +60,7 @@ class TexFie extends HiveObject {
     Fonts? font,
     double? fontSize,
     String? texFieUrl,
+    TexFieState? state,
   }) {
     return TexFie(
       contents: contents ?? this.contents,
@@ -61,6 +71,7 @@ class TexFie extends HiveObject {
       font: font ?? this.font,
       fontSize: fontSize ?? this.fontSize,
       texFieUrl: texFieUrl ?? this.texFieUrl,
+      state: state ?? this.state,
     );
   }
 }

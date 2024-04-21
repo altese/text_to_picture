@@ -104,7 +104,7 @@ GestureDetector renderTexFie(
               child: child,
             );
           },
-          pageBuilder: (context, _, __) => const InputScreen(),
+          pageBuilder: (context, _, __) => InputScreen(texFie: texFie),
         ),
       );
     },
