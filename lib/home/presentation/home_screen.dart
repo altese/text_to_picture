@@ -58,6 +58,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                     .toList(),
               ),
+              renderPick(
+                children: [(12.0, '작게'), (14.0, '중간'), (16.0, '크게')]
+                    .map(
+                      (e) => renderItem(
+                        child: Text(
+                          e.$2,
+                          style: TextStyle(fontSize: e.$1),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
               const SizedBox(height: 20),
               renderBottom(context),
             ],
@@ -259,7 +271,6 @@ void requestPermission(BuildContext context, PermissionStatus status) async {
       );
     },
   );
-  // }
 }
 
 SingleChildScrollView renderPick({
