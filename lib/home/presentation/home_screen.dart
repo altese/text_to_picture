@@ -87,9 +87,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 10),
               renderPick(datas: Fonts.values, type: OptionType.fontFamily),
               const SizedBox(height: 10),
-              renderPick(
-                datas: FontSizes.values,
-                type: OptionType.fontSize,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      //
+                    },
+                    icon: SvgPicture.asset('assets/svgs/font_black.svg'),
+                  ),
+                  renderPick(
+                      datas: FontSizes.values, type: OptionType.fontSize),
+                  IconButton(
+                    onPressed: () {
+                      //
+                    },
+                    icon: SvgPicture.asset('assets/svgs/font_white.svg'),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               renderBottom(context, ref),
