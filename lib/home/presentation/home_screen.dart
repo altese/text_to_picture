@@ -1,10 +1,16 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 import 'package:text_to_picture_app/common/widgets/animation_button.dart';
@@ -19,9 +25,46 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final GlobalKey _globalKey = GlobalKey();
+
+  Future<Uint8List> _capturePng() async {
+    try {
+      RenderRepaintBoundary boundary = _globalKey.currentContext!
+          .findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      // String base64 = base64Encode(pngBytes);
+
+      _galleySaver(pngBytes);
+      return pngBytes;
+    } catch (e) {
+      print(e.toString());
+      return Uint8List(0);
+    }
+  }
+
+  void _galleySaver(Uint8List imageBytes) async {
+    final status = await Permission.storage.status;
+
+    print(status);
+
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    } else {
+      await ImageGallerySaver.saveImage(
+        Uint8List.fromList(imageBytes),
+        quality: 100,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
+    print('build');
 
     return Scaffold(
       backgroundColor: AppColor.bgColor,
@@ -30,13 +73,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              renderTop(),
+              Top(onPressed: _capturePng),
               const SizedBox(height: 30),
               renderTexFie(
                 context,
                 height: size.width - 40,
                 textColor: AppColor.textColor,
                 ref: ref,
+                key: _globalKey,
               ),
               const SizedBox(height: 20),
               renderPick(datas: AppColor.imageBgColors, type: OptionType.color),
@@ -57,21 +101,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-Row renderTop() {
-  return Row(
-    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      // const CircleImage(
-      //   diameter: 50,
-      //   image: NetworkImage(
-      //     'https://kin-phinf.pstatic.net/20220910_23/1662814623235WWQpE_JPEG/FE054733-3554-475D-9E18-054509B8D11F.jpeg?type=w750',
-      //   ),
-      // ),
-      SvgPicture.asset('assets/svgs/app_logo.svg'),
-      // const Icon(size: 35, Icons.search)
-    ],
-  );
+class Top extends StatefulWidget {
+  const Top({
+    super.key,
+    required this.onPressed,
+  });
+
+  final Future<Uint8List> Function() onPressed;
+
+  @override
+  State<Top> createState() => _TopState();
+}
+
+class _TopState extends State<Top> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // const CircleImage(
+        //   diameter: 50,
+        //   image: NetworkImage(
+        //     'https://kin-phinf.pstatic.net/20220910_23/1662814623235WWQpE_JPEG/FE054733-3554-475D-9E18-054509B8D11F.jpeg?type=w750',
+        //   ),
+        // ),
+        const SizedBox(width: 45),
+        SvgPicture.asset('assets/svgs/app_logo.svg'),
+        IconButton(
+          onPressed: () async {
+            print('onPressed');
+            widget.onPressed();
+          },
+          icon: const Icon(Icons.save_alt),
+        ),
+      ],
+    );
+  }
 }
 
 GestureDetector renderTexFie(
@@ -79,6 +145,7 @@ GestureDetector renderTexFie(
   required double height,
   required Color textColor,
   required WidgetRef ref,
+  required Key key,
 }) {
   final texFie = ref.watch(texFieNotifierProvider);
 
@@ -108,51 +175,54 @@ GestureDetector renderTexFie(
         ),
       );
     },
-    child: Container(
-      padding: const EdgeInsets.all(30),
-      height: height,
-      decoration: BoxDecoration(
-        color: texFie.backgoundColor,
-        border: Border.all(color: AppColor.borderColor),
-        image: backgroundImage,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          const SizedBox(),
-          Text(
-            texFie.contents,
-            style: TextStyle(
-              color: textColor,
-              fontSize: texFie.fontSize,
-              fontFamily: texFie.font!.name,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    texFie.title!,
-                    style: AppTextStyles.textStyle14.copyWith(
-                      color: textColor,
-                      fontFamily: texFie.font!.name,
-                    ),
-                  ),
-                  Text(
-                    texFie.author!,
-                    style: AppTextStyles.textStyle14.copyWith(
-                      color: textColor,
-                      fontFamily: texFie.font!.name,
-                    ),
-                  ),
-                ],
+    child: RepaintBoundary(
+      key: key,
+      child: Container(
+        padding: const EdgeInsets.all(30),
+        height: height,
+        decoration: BoxDecoration(
+          color: texFie.backgoundColor,
+          border: Border.all(color: AppColor.borderColor),
+          image: backgroundImage,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const SizedBox(),
+            Text(
+              texFie.contents,
+              style: TextStyle(
+                color: textColor,
+                fontSize: texFie.fontSize,
+                fontFamily: texFie.font!.name,
               ),
-            ],
-          ),
-        ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      texFie.title!,
+                      style: AppTextStyles.textStyle14.copyWith(
+                        color: textColor,
+                        fontFamily: texFie.font!.name,
+                      ),
+                    ),
+                    Text(
+                      texFie.author!,
+                      style: AppTextStyles.textStyle14.copyWith(
+                        color: textColor,
+                        fontFamily: texFie.font!.name,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -162,15 +232,6 @@ Row renderBottom(BuildContext context, WidgetRef ref) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
-      // TextButton(
-      //   onPressed: () {},
-      //   child: Text(
-      //     'T',
-      //     style: AppTextStyles.textStyle30.copyWith(
-      //       fontFamily: AppTextStyles.fontFamily,
-      //     ),
-      //   ),
-      // ),
       AnimationButton(
         useDelay: true,
         type: ButtonType.icon,
@@ -190,19 +251,11 @@ Row renderBottom(BuildContext context, WidgetRef ref) {
                   .set(backgroundImageUrl: image.path);
             }
           } catch (e) {
+            // ignore: use_build_context_synchronously
             requestPermission(context);
           }
         },
       ),
-      // TextButton(
-      //   onPressed: () {},
-      //   child: Text(
-      //     'F',
-      //     style: AppTextStyles.textStyle30.copyWith(
-      //       fontFamily: AppTextStyles.fontFamily,
-      //     ),
-      //   ),
-      // ),
     ],
   );
 }
@@ -358,9 +411,7 @@ class OptionItem<T> extends ConsumerWidget {
             color: setColor(),
             shape: BoxShape.circle,
             border: type == OptionType.color
-                ? Border.all(
-                    color: AppColor.borderColor,
-                  )
+                ? Border.all(color: AppColor.borderColor)
                 : null,
           ),
           child: type == OptionType.color
