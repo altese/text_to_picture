@@ -21,7 +21,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
             author: '',
             backgoundColor: AppColor.imageBgColors[5],
             font: Fonts.maruburi,
-            fontSize: 14,
+            fontSize: FontSizes.medium,
             state: TexFieState.initial,
           ),
         ) {
@@ -38,7 +38,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
       author: book.author,
       backgoundColor: AppColor.imageBgColors[5],
       font: Fonts.maruburi,
-      fontSize: 14,
+      fontSize: FontSizes.medium,
       state: TexFieState.initial,
     );
   }
@@ -50,7 +50,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
     String? backgroundImageUrl,
     Color? backgoundColor,
     Fonts? font,
-    double? fontSize,
+    FontSizes? fontSize,
     String? texFieUrl,
     TexFieState? texFieState,
   }) {

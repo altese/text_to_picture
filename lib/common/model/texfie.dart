@@ -31,7 +31,7 @@ class TexFie extends HiveObject {
   Fonts? font;
 
   @HiveField(6)
-  double? fontSize;
+  FontSizes? fontSize;
 
   @HiveField(7)
   String? texFieUrl;
@@ -58,7 +58,7 @@ class TexFie extends HiveObject {
     String? backgroundImageUrl,
     Color? backgoundColor,
     Fonts? font,
-    double? fontSize,
+    FontSizes? fontSize,
     String? texFieUrl,
     TexFieState? state,
   }) {

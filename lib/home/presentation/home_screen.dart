@@ -208,7 +208,7 @@ GestureDetector renderTexFie(
               texFie.contents,
               style: TextStyle(
                 color: textColor,
-                fontSize: texFie.fontSize,
+                fontSize: texFie.fontSize!.fontSize,
                 fontFamily: texFie.font!.name,
               ),
             ),
@@ -383,19 +383,15 @@ class OptionItem<T> extends ConsumerWidget {
     return null;
   }
 
-  (String label, double fontSize, Fonts fontFamily) setFont() {
+  (String label, FontSizes fontSize, Fonts fontFamily) setFont() {
     if (type == OptionType.fontSize) {
       final conversedData = data as FontSizes;
-      return (
-        conversedData.displayName,
-        conversedData.fontSize,
-        Fonts.maruburi
-      );
+      return (conversedData.displayName, conversedData, Fonts.maruburi);
     } else {
       final conversedData = data as Fonts;
       return (
         conversedData.displayName,
-        14.0,
+        FontSizes.medium,
         conversedData,
       );
     }
@@ -436,7 +432,7 @@ class OptionItem<T> extends ConsumerWidget {
                     setFont().$1,
                     style: TextStyle(
                       fontFamily: setFont().$3.name,
-                      fontSize: setFont().$2,
+                      fontSize: setFont().$2.fontSize,
                     ),
                   ),
                 ),
