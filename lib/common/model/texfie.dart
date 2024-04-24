@@ -39,6 +39,9 @@ class TexFie extends HiveObject {
   @HiveField(8)
   TexFieState state;
 
+  @HiveField(9)
+  Color? fontColor;
+
   TexFie({
     required this.contents,
     this.title,
@@ -49,6 +52,7 @@ class TexFie extends HiveObject {
     this.fontSize,
     this.texFieUrl,
     required this.state,
+    this.fontColor,
   });
 
   TexFie copyWith({
@@ -61,6 +65,7 @@ class TexFie extends HiveObject {
     FontSizes? fontSize,
     String? texFieUrl,
     TexFieState? state,
+    Color? fontColor,
   }) {
     return TexFie(
       contents: contents ?? this.contents,
@@ -72,6 +77,7 @@ class TexFie extends HiveObject {
       fontSize: fontSize ?? this.fontSize,
       texFieUrl: texFieUrl ?? this.texFieUrl,
       state: state ?? this.state,
+      fontColor: fontColor ?? this.fontColor,
     );
   }
 }

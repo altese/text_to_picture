@@ -126,7 +126,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        //
+                        ref
+                            .read(texFieNotifierProvider.notifier)
+                            .set(fontColor: AppColor.textColor);
                       },
                       icon: SvgPicture.asset('assets/svgs/font_black.svg'),
                     ),
@@ -134,7 +136,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         datas: FontSizes.values, type: OptionType.fontSize),
                     IconButton(
                       onPressed: () {
-                        //
+                        ref
+                            .read(texFieNotifierProvider.notifier)
+                            .set(fontColor: AppColor.bgColor);
                       },
                       icon: SvgPicture.asset('assets/svgs/font_white.svg'),
                     ),
@@ -264,7 +268,7 @@ GestureDetector renderTexFie(
             Text(
               texFie.contents,
               style: TextStyle(
-                // color: texFie.fontColor,
+                color: texFie.fontColor,
                 fontSize: texFie.fontSize!.fontSize,
                 fontFamily: texFie.font!.name,
               ),
@@ -284,7 +288,7 @@ GestureDetector renderTexFie(
                       Text(
                         texFie.title!,
                         style: AppTextStyles.textStyle14.copyWith(
-                          // color: texFie.fontColor,
+                          color: texFie.fontColor,
                           fontFamily: texFie.font!.name,
                         ),
                       ),
@@ -292,7 +296,7 @@ GestureDetector renderTexFie(
                       Text(
                         texFie.author!,
                         style: AppTextStyles.textStyle14.copyWith(
-                          // color: texFie.fontColor,
+                          color: texFie.fontColor,
                           fontFamily: texFie.font!.name,
                         ),
                       ),

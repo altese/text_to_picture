@@ -23,6 +23,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
             font: Fonts.maruburi,
             fontSize: FontSizes.medium,
             state: TexFieState.initial,
+            fontColor: AppColor.textColor,
           ),
         ) {
     initTexFie();
@@ -40,6 +41,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
       font: Fonts.maruburi,
       fontSize: FontSizes.medium,
       state: TexFieState.initial,
+      fontColor: AppColor.textColor,
     );
   }
 
@@ -53,6 +55,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
     FontSizes? fontSize,
     String? texFieUrl,
     TexFieState? texFieState,
+    Color? fontColor,
   }) {
     state = state.copyWith(
       contents: contents,
@@ -64,6 +67,7 @@ class TexFieNotifier extends StateNotifier<TexFie> {
       fontSize: fontSize,
       texFieUrl: texFieUrl,
       state: texFieState,
+      fontColor: fontColor,
     );
   }
 }
