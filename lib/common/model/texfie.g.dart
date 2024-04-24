@@ -23,7 +23,7 @@ class TexFieAdapter extends TypeAdapter<TexFie> {
       backgroundImageUrl: fields[3] as String?,
       backgoundColor: fields[4] as Color?,
       font: fields[5] as Fonts?,
-      fontSize: fields[6] as double?,
+      fontSize: fields[6] as FontSizes?,
       texFieUrl: fields[7] as String?,
       state: fields[8] as TexFieState,
     );

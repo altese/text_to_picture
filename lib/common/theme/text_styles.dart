@@ -16,14 +16,19 @@ enum Fonts {
 }
 
 enum FontSizes {
-  small('작게', 12),
-  medium('보통', 14),
-  large('크게', 16);
+  small('작게', 14, 20), // 17
+  medium('보통', 16, 23), // 20
+  large('크게', 18, 26); // 23
 
   final String displayName;
   final double fontSize;
+  final double lineHeight;
 
-  const FontSizes(this.displayName, this.fontSize);
+  const FontSizes(
+    this.displayName,
+    this.fontSize,
+    this.lineHeight,
+  );
 }
 
 class AppTextStyles {

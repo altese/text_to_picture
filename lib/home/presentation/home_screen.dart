@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:text_to_picture_app/common/model/texfie.dart';
 import 'package:text_to_picture_app/common/theme/app_colors.dart';
 import 'package:text_to_picture_app/common/theme/text_styles.dart';
 import 'package:text_to_picture_app/common/widgets/animation_button.dart';
@@ -69,46 +70,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColor.bgColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Top(onPressed: _capturePng),
-              const SizedBox(height: 30),
-              renderTexFie(
-                context,
-                height: size.width - 40,
-                textColor: AppColor.textColor,
-                ref: ref,
-                key: _globalKey,
-              ),
-              const SizedBox(height: 20),
-              renderPick(datas: AppColor.imageBgColors, type: OptionType.color),
-              const SizedBox(height: 10),
-              renderPick(datas: Fonts.values, type: OptionType.fontFamily),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      //
-                    },
-                    icon: SvgPicture.asset('assets/svgs/font_black.svg'),
-                  ),
-                  renderPick(
-                      datas: FontSizes.values, type: OptionType.fontSize),
-                  IconButton(
-                    onPressed: () {
-                      //
-                    },
-                    icon: SvgPicture.asset('assets/svgs/font_white.svg'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              renderBottom(context, ref),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Top(onPressed: _capturePng),
+                const SizedBox(height: 30),
+                renderTexFie(
+                  context,
+                  height: size.width - 40,
+                  textColor: AppColor.textColor,
+                  ref: ref,
+                  key: _globalKey,
+                ),
+                const SizedBox(height: 20),
+                renderPick(
+                    datas: AppColor.imageBgColors, type: OptionType.color),
+                const SizedBox(height: 10),
+                renderPick(datas: Fonts.values, type: OptionType.fontFamily),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        //
+                      },
+                      icon: SvgPicture.asset('assets/svgs/font_black.svg'),
+                    ),
+                    renderPick(
+                        datas: FontSizes.values, type: OptionType.fontSize),
+                    IconButton(
+                      onPressed: () {
+                        //
+                      },
+                      icon: SvgPicture.asset('assets/svgs/font_white.svg'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                renderBottom(context, ref),
+              ],
+            ),
           ),
         ),
       ),
@@ -152,6 +156,28 @@ class _TopState extends State<Top> {
         ),
       ],
     );
+  }
+}
+
+int _setMaxLines(
+  BuildContext context, {
+  required double imageHeight,
+  required TexFie texFie,
+  // required double lineHeight,
+}) {
+  int maxLines = ((imageHeight - 60) ~/ texFie.fontSize!.lineHeight);
+
+  final width = MediaQuery.of(context).size.width;
+
+  print(
+      '폰 너비: $width, imageHeight: ${imageHeight - 60 - 20}, lineHeight: ${texFie.fontSize!.lineHeight} maxLines: $maxLines');
+
+  if (texFie.author == '' && texFie.title == '') {
+    return maxLines;
+  } else if (texFie.author != '' && texFie.title != '') {
+    return maxLines - 2;
+  } else {
+    return maxLines - 1;
   }
 }
 
@@ -207,9 +233,14 @@ GestureDetector renderTexFie(
             Text(
               texFie.contents,
               style: TextStyle(
-                color: textColor,
+                // color: texFie.fontColor,
                 fontSize: texFie.fontSize!.fontSize,
                 fontFamily: texFie.font!.name,
+              ),
+              maxLines: _setMaxLines(
+                context,
+                imageHeight: height,
+                texFie: texFie,
               ),
             ),
             Row(
@@ -218,20 +249,22 @@ GestureDetector renderTexFie(
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      texFie.title!,
-                      style: AppTextStyles.textStyle14.copyWith(
-                        color: textColor,
-                        fontFamily: texFie.font!.name,
+                    if (texFie.title != '')
+                      Text(
+                        texFie.title!,
+                        style: AppTextStyles.textStyle14.copyWith(
+                          // color: texFie.fontColor,
+                          fontFamily: texFie.font!.name,
+                        ),
                       ),
-                    ),
-                    Text(
-                      texFie.author!,
-                      style: AppTextStyles.textStyle14.copyWith(
-                        color: textColor,
-                        fontFamily: texFie.font!.name,
+                    if (texFie.author != '')
+                      Text(
+                        texFie.author!,
+                        style: AppTextStyles.textStyle14.copyWith(
+                          // color: texFie.fontColor,
+                          fontFamily: texFie.font!.name,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ],
