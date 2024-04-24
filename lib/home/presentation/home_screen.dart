@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:app_settings/app_settings.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,18 +47,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  Future<bool> _checkStoragePermission() async {
+    PermissionStatus status;
+    if (Platform.isAndroid) {
+      final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+      final AndroidDeviceInfo info = await deviceInfoPlugin.androidInfo;
+      if ((info.version.sdkInt) >= 33) {
+        status = await Permission.manageExternalStorage.request();
+      } else {
+        status = await Permission.storage.request();
+      }
+    } else {
+      status = await Permission.storage.request();
+    }
+
+    switch (status) {
+      case PermissionStatus.denied:
+        return false;
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.restricted:
+        return false;
+      case PermissionStatus.limited:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      case PermissionStatus.provisional:
+        return false;
+    }
+  }
+
   void _galleySaver(Uint8List imageBytes) async {
-    final status = await Permission.storage.status;
+    final status = await _checkStoragePermission();
 
     print(status);
 
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    } else {
+    if (status) {
       await ImageGallerySaver.saveImage(
         Uint8List.fromList(imageBytes),
         quality: 100,
       );
+    } else {
+      await Permission.storage.request();
     }
   }
 
